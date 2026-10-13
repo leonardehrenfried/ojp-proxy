@@ -30,8 +30,10 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          # docker tags may not contain ':', so the commit time uses '-' between time fields
+          TAG="$(TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H-%M-%SZ --format=%cd)-${GITHUB_SHA::7}"
           ./mvnw -B -DskipTests package jib:build \
             -Djib.to.image="$IMAGE:latest" \
-            -Djib.to.tags="${GITHUB_SHA::7}" \
+            -Djib.to.tags="$TAG" \
             -Djib.to.auth.username="$REGISTRY_USER" \
             -Djib.to.auth.password="$REGISTRY_PASSWORD"
