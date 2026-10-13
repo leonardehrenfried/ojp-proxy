@@ -5,9 +5,11 @@ import de.vdv.ojp20.OJPResponseStructure;
 import de.vdv.ojp20.ObjectFactory;
 import de.vdv.ojp20.siri.ParticipantRefStructure;
 import de.vdv.ojp20.siri.ServiceDelivery;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -62,6 +64,11 @@ public class OjpController {
         }
         var response = new OJP().withVersion("2.0").withOJPResponse(new OJPResponseStructure().withServiceDelivery(serviceDelivery));
         return streamer.stream(out -> parser.write(response, out));
+    }
+
+    @Error(exception = UnsupportedRequestException.class)
+    public HttpResponse<String> badRequest(UnsupportedRequestException e) {
+        return HttpResponse.<String>badRequest(e.getMessage()).contentType(MediaType.TEXT_PLAIN_TYPE);
     }
 
 }
