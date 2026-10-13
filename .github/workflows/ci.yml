@@ -31,7 +31,7 @@ jobs:
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           # docker tags may not contain ':', so the commit time uses '-' between time fields
-          TAG="$(TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H-%M-%SZ --format=%cd)-${GITHUB_SHA::7}"
+          TAG="$(TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H-%M-%SZ --format=%cd)"
           ./mvnw -B -DskipTests package jib:build \
             -Djib.to.image="$IMAGE:latest" \
             -Djib.to.tags="$TAG" \
