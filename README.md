@@ -24,5 +24,7 @@ Pelias features become `PlaceResult`s: layer `stops` → `StopPlace` (ref = OTP 
 ```sh
 ./mvnw test
 ./mvnw mn:run      # http://localhost:8080/ojp, Pelias base URL via PELIAS_URL
+./mvnw package jib:dockerBuild   # builds the local image ojp-proxy:latest
+docker run -p 8080:8080 -e PELIAS_URL=... ojp-proxy
 curl -X POST -H 'Content-Type: application/xml' --data-binary @src/test/resources/lir-request.xml localhost:8080/ojp
 ```
