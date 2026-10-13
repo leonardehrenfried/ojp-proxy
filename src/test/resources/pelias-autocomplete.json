@@ -1,0 +1,19 @@
+{
+  "geocoding": {"query": {"text": "bolzano", "lang": {"iso6391": "de"}}},
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [11.358386, 46.496637]},
+     "properties": {"id": "netex:it:apb:StopPlace:it-22021-468:", "gid": "otp:stops:netex:it:apb:StopPlace:it-22021-468:",
+       "layer": "stops", "source": "otp", "name": "Bolzano, Stazione", "label": "Bolzano, Stazione, Bozen, BZ, Italien"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [11.35, 46.49]},
+     "properties": {"id": "101751763", "gid": "whosonfirst:locality:101751763", "layer": "locality",
+       "name": "Bozen", "label": "Bozen, BZ, Italien"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [11.34, 46.50]},
+     "properties": {"id": "it/countrywide:8c4a", "gid": "openaddresses:address:it/countrywide:8c4a", "layer": "address",
+       "name": "Via Roma 10", "street": "Via Roma", "housenumber": "10", "locality": "Bozen", "country": "Italien",
+       "label": "Via Roma 10, Bozen, BZ, Italien"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [11.36, 46.51]},
+     "properties": {"id": "node/2080290084", "gid": "openstreetmap:venue:node/2080290084", "layer": "venue",
+       "name": "Ötzi Museum", "label": "Ötzi Museum, Bozen, BZ, Italien"}}
+  ]
+}
