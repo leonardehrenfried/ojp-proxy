@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   pull_request:
+    
+env:
+  # maven default arguments to make the log quieter and colourful
+  MAVEN_ARGS: "--no-transfer-progress -Dstyle.color=always"
+
 
 jobs:
   build:
