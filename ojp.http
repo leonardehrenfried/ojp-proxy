@@ -1,3 +1,5 @@
+### LocationInformationRequest
+
 POST localhost:8080/ojp
 Content-Type: application/xml
 
@@ -6,7 +8,7 @@ Content-Type: application/xml
     <OJPRequest>
         <siri:ServiceRequest>
             <siri:RequestTimestamp>2023-06-16T16:08:04+02:00</siri:RequestTimestamp>
-            <siri:RequestorRef>HACON</siri:RequestorRef>
+            <siri:RequestorRef>OTP-RR</siri:RequestorRef>
             <siri:MessageIdentifier>123</siri:MessageIdentifier>
             <OJPLocationInformationRequest>
                 <siri:RequestTimestamp>2023-06-16T16:08:04+02:00</siri:RequestTimestamp>
@@ -14,6 +16,42 @@ Content-Type: application/xml
                     <Name>Cagliari</Name>
                 </InitialInput>
             </OJPLocationInformationRequest>
+        </siri:ServiceRequest>
+    </OJPRequest>
+</OJP>
+
+### TripRequest
+
+POST localhost:8080/ojp
+Content-Type: application/xml
+
+<OJP xmlns="http://www.vdv.de/ojp" xmlns:siri="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://www.vdv.de/ojp ../../OJP.xsd">
+    <OJPRequest>
+        <siri:ServiceRequest>
+            <siri:RequestTimestamp>2026-11-18T13:42:32.085+01:00</siri:RequestTimestamp>
+            <siri:RequestorRef>OpenTripPlanner</siri:RequestorRef>
+            <OJPTripRequest>
+                <Origin>
+                    <PlaceRef>
+                        <StopPlaceRef>netex:it:22078:7062:50:2</StopPlaceRef>
+                        <Name>
+                            <Text>unused</Text>
+                        </Name>
+                    </PlaceRef>
+                    <DepArrTime>2026-11-18T13:42:32.085+01:00</DepArrTime>
+                </Origin>
+                <Destination>
+                    <PlaceRef>
+                        <StopPlaceRef>netex:IT:ITH5:Quay:TPER-FE:600164</StopPlaceRef>
+                        <Name>
+                            <Text>unused</Text>
+                        </Name>
+                    </PlaceRef>
+                </Destination>
+                <Params>
+                    <IncludeIntermediateStops>true</IncludeIntermediateStops>
+                </Params>
+            </OJPTripRequest>
         </siri:ServiceRequest>
     </OJPRequest>
 </OJP>

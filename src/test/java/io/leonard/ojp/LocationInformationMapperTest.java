@@ -18,7 +18,7 @@ class LocationInformationMapperTest {
     OJPLocationInformationRequestStructure request() throws Exception {
         var parser = new OjpParser();
         try (var xml = getClass().getResourceAsStream("/lir-request.xml")) {
-            return parser.locationInformationRequests(parser.parse(xml)).getFirst();
+            return parser.onlyLocationInformationRequests(parser.parse(xml)).getFirst();
         }
     }
 

@@ -41,15 +41,18 @@ public class OjpParser {
         marshaller.marshal(ojp, out);
     }
 
-    /** All LocationInformationRequests contained in the document's ServiceRequest, if any. */
-    public List<OJPLocationInformationRequestStructure> locationInformationRequests(OJP ojp) {
-        return Optional.ofNullable(ojp.getOJPRequest())
+    /**
+     * The document's LocationInformationRequests if its ServiceRequest consists only of those, otherwise
+     * empty (no ServiceRequest, or it contains other request types such as trip requests).
+     */
+    public List<OJPLocationInformationRequestStructure> onlyLocationInformationRequests(OJP ojp) {
+        var requests = Optional.ofNullable(ojp.getOJPRequest())
                 .map(OJPRequestStructure::getServiceRequest)
-                .map(sr -> sr.getAbstractFunctionalServiceRequest().stream()
-                        .map(JAXBElement::getValue)
-                        .filter(OJPLocationInformationRequestStructure.class::isInstance)
-                        .map(OJPLocationInformationRequestStructure.class::cast)
-                        .toList())
+                .map(sr -> sr.getAbstractFunctionalServiceRequest().stream().map(JAXBElement::getValue).toList())
                 .orElse(List.of());
+        if (!requests.stream().allMatch(OJPLocationInformationRequestStructure.class::isInstance)) {
+            return List.of();
+        }
+        return requests.stream().map(OJPLocationInformationRequestStructure.class::cast).toList();
     }
 }

@@ -13,12 +13,20 @@ class OjpParserTest {
         // example shipped inside the ojp-java-model jar
         try (var xml = getClass().getResourceAsStream(
                 "/xsd/2.0/examples/switzerland/LocationInformation_002_Stop_InitialInput_Request.xml")) {
-            var lirs = parser.locationInformationRequests(parser.parse(xml));
+            var lirs = parser.onlyLocationInformationRequests(parser.parse(xml));
 
             assertEquals(1, lirs.size());
             var lir = lirs.getFirst();
             assertEquals("Bern", lir.getInitialInput().getName());
             assertEquals("4712", lir.getMessageIdentifier().getValue());
+        }
+    }
+
+    @Test
+    void returnsEmptyListForTripRequests() throws Exception {
+        var parser = new OjpParser();
+        try (var xml = getClass().getResourceAsStream("/xsd/2.0/examples/switzerland/Trip_001_Request.xml")) {
+            assertTrue(parser.onlyLocationInformationRequests(parser.parse(xml)).isEmpty());
         }
     }
 
@@ -37,7 +45,7 @@ class OjpParserTest {
         var parser = new OjpParser();
         try (var xml = getClass().getResourceAsStream(
                 "/xsd/2.0/examples/switzerland/LocationInformation_002_Stop_InitialInput_Response.xml")) {
-            assertTrue(parser.locationInformationRequests(parser.parse(xml)).isEmpty());
+            assertTrue(parser.onlyLocationInformationRequests(parser.parse(xml)).isEmpty());
         }
     }
 }

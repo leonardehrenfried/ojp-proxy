@@ -26,6 +26,9 @@ class OjpControllerTest {
 
     static HttpServer pelias;
     static final AtomicReference<String> peliasQuery = new AtomicReference<>();
+    static HttpServer otp;
+    static final AtomicReference<String> otpRequest = new AtomicReference<>();
+    static final byte[] OTP_RESPONSE = "<OJP xmlns=\"http://www.vdv.de/ojp\" version=\"2.0\"/>".getBytes(StandardCharsets.UTF_8);
     static EmbeddedServer server;
     static HttpClient client;
 
@@ -42,8 +45,21 @@ class OjpControllerTest {
         });
         pelias.start();
 
-        server = ApplicationContext.run(EmbeddedServer.class,
-                Map.of("micronaut.server.port", -1, "micronaut.http.services.pelias.url", "http://localhost:" + pelias.getAddress().getPort()));
+        otp = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        otp.createContext("/otp/ojp/v2", exchange -> {
+            otpRequest.set(exchange.getRequestMethod() + " " + exchange.getRequestURI().getPath() + " "
+                    + new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+            exchange.getResponseHeaders().add("Content-Type", "application/xml");
+            exchange.sendResponseHeaders(200, OTP_RESPONSE.length);
+            exchange.getResponseBody().write(OTP_RESPONSE);
+            exchange.close();
+        });
+        otp.start();
+
+        server = ApplicationContext.run(EmbeddedServer.class, Map.of(
+                "micronaut.server.port", -1,
+                "micronaut.http.services.pelias.url", "http://localhost:" + pelias.getAddress().getPort(),
+                "micronaut.http.services.otp.url", "http://localhost:" + otp.getAddress().getPort() + "/otp/ojp/v2/"));
         client = server.getApplicationContext().createBean(HttpClient.class, server.getURL());
     }
 
@@ -52,6 +68,7 @@ class OjpControllerTest {
         client.close();
         server.close();
         pelias.stop(0);
+        otp.stop(0);
     }
 
     @Test
@@ -74,7 +91,19 @@ class OjpControllerTest {
     }
 
     @Test
-    void rejectsNonLocationInformationRequests() {
+    void forwardsOtherRequestsToOtp() throws Exception {
+        var xml = new String(OjpControllerTest.class
+                .getResourceAsStream("/xsd/2.0/examples/switzerland/Trip_001_Request.xml").readAllBytes(), StandardCharsets.UTF_8);
+        var response = client.toBlocking().exchange(
+                HttpRequest.POST("/ojp", xml).contentType(MediaType.APPLICATION_XML_TYPE), String.class);
+
+        assertEquals("POST /otp/ojp/v2/ " + xml, otpRequest.get());
+        assertEquals(new String(OTP_RESPONSE, StandardCharsets.UTF_8), response.body());
+        assertEquals(MediaType.APPLICATION_XML_TYPE, response.getContentType().orElseThrow());
+    }
+
+    @Test
+    void rejectsInvalidRequests() {
         var e = org.junit.jupiter.api.Assertions.assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().retrieve(
                         HttpRequest.POST("/ojp", "<foo/>").contentType(MediaType.APPLICATION_XML_TYPE), String.class));
